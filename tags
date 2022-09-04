@@ -12,6 +12,7 @@ Database	src/db/Database.java	/^    public Database(String database) {$/;"	m	cla
 Database	src/db/Database.java	/^public final class Database {$/;"	c
 GET	src/http/HttpMethod.java	/^    GET,$/;"	e	enum:HttpMethod	file:
 HEAD	src/http/HttpMethod.java	/^    HEAD,$/;"	e	enum:HttpMethod	file:
+HttpContext	src/http/HttpContext.java	/^public record HttpContext(HttpRequest request, Database database, SessionManager sessionManager) {$/;"	m
 HttpForm	src/http/HttpForm.java	/^public record HttpForm(Map<String, String> entries) {$/;"	m
 HttpHandler	src/http/HttpHandler.java	/^public interface HttpHandler {$/;"	i
 HttpHeaders	src/http/HttpHeaders.java	/^public record HttpHeaders(Map<String, String> map) {$/;"	m
@@ -22,7 +23,7 @@ HttpResponse	src/http/HttpResponse.java	/^    public HttpResponse(HttpStatus sta
 HttpResponse	src/http/HttpResponse.java	/^    public HttpResponse(HttpStatus status, HttpHeaders headers, String body) {$/;"	m	class:HttpResponse
 HttpResponse	src/http/HttpResponse.java	/^    public HttpResponse(HttpStatus status, HttpHeaders headers, byte[] body) {$/;"	m	class:HttpResponse
 HttpResponse	src/http/HttpResponse.java	/^public final class HttpResponse {$/;"	c
-HttpServer	src/http/HttpServer.java	/^public record HttpServer(int port, List<HttpHandler> handlers) {$/;"	m
+HttpServer	src/http/HttpServer.java	/^public record HttpServer(int port, List<HttpHandler> handlers, Database database, SessionManager sessionManager) {$/;"	m
 HttpStatus	src/http/HttpStatus.java	/^public record HttpStatus(int code, String description) {$/;"	m
 Launcher	src/launcher/Launcher.java	/^public record Launcher() {$/;"	m
 Logging	src/util/Logging.java	/^public record Logging() {$/;"	m
@@ -33,10 +34,7 @@ POST	src/http/HttpMethod.java	/^    POST,$/;"	e	enum:HttpMethod	file:
 Permission	src/model/Permission.java	/^public enum Permission {$/;"	g
 ResultSetDeserializer	src/db/ResultSetDeserializer.java	/^public interface ResultSetDeserializer<T> {$/;"	i
 SUPER_USER	src/model/Permission.java	/^    SUPER_USER,$/;"	e	enum:Permission	file:
-Session	src/Session/Session.java	/^package Session;$/;"	p
 Session	src/Session/Session.java	/^public record Session(SessionKey key, String user) {$/;"	m
-Session	src/Session/SessionKey.java	/^package Session;$/;"	p
-Session	src/Session/SessionManager.java	/^package Session;$/;"	p
 SessionKey	src/Session/SessionKey.java	/^public record SessionKey(UUID uuid) {$/;"	m
 SessionManager	src/Session/SessionManager.java	/^public record SessionManager(ConcurrentMap<SessionKey, Session> sessions) {$/;"	m
 SuperUserCreator	src/launcher/SuperUserCreator.java	/^public record SuperUserCreator() {$/;"	m
@@ -46,13 +44,14 @@ UserDAO	src/db/UserDAO.java	/^public class UserDAO {$/;"	c
 UserPermission	src/model/UserPermission.java	/^public record UserPermission(String user, Permission permission) {$/;"	m
 UserPermissionsDAO	src/db/UserPermissionsDAO.java	/^    UserPermissionsDAO(Database db) {$/;"	m	class:UserPermissionsDAO
 UserPermissionsDAO	src/db/UserPermissionsDAO.java	/^public class UserPermissionsDAO {$/;"	c
-accept	src/http/HttpHandler.java	/^    boolean accept(HttpRequest request);$/;"	m	interface:HttpHandler
-addCookie	src/http/HttpResponse.java	/^    public void addCookie(String key, String value) {$/;"	m	class:HttpResponse
+accept	src/http/HttpHandler.java	/^    default boolean accept(HttpContext context) {$/;"	m	interface:HttpHandler
+accept	src/http/HttpHandler.java	/^    default boolean accept(HttpRequest request) {$/;"	m	interface:HttpHandler
 all	src/db/UserDAO.java	/^    public List<User> all() {$/;"	m	class:UserDAO
 body	src/http/HttpResponse.java	/^    private final byte[] body;$/;"	f	class:HttpResponse	file:
 body	src/http/HttpResponse.java	/^    public byte[] body() {$/;"	m	class:HttpResponse
 byName	src/db/UserDAO.java	/^    public Optional<User> byName(String name) {$/;"	m	class:UserDAO
 cookies	src/http/HttpResponse.java	/^    private final Map<String, String> cookies;$/;"	f	class:HttpResponse	file:
+cookies	src/http/HttpResponse.java	/^    public Map<String, String> cookies() {$/;"	m	class:HttpResponse
 createTable	src/db/UserDAO.java	/^    void createTable() {$/;"	m	class:UserDAO
 createTable	src/db/UserPermissionsDAO.java	/^    void createTable() {$/;"	m	class:UserPermissionsDAO
 db	src/db/ConnectionHandler.java	/^package db;$/;"	p
@@ -68,14 +67,13 @@ deserialize	src/db/ResultSetDeserializer.java	/^    T deserialize(ResultSet rs) 
 deserialize	src/db/UserDAO.java	/^    public User deserialize(ResultSet rs) throws SQLException {$/;"	m	class:UserDAO
 exists	src/db/UserDAO.java	/^    public boolean exists(User user) {$/;"	m	class:UserDAO
 exists	src/db/UserPermissionsDAO.java	/^    public boolean exists(UserPermission userPermission) {$/;"	m	class:UserPermissionsDAO
-getCookies	src/http/HttpResponse.java	/^    public Map<String, String> getCookies() {$/;"	m	class:HttpResponse
 handle	src/db/ConnectionHandler.java	/^    T handle(Connection connection) throws SQLException;$/;"	m	interface:ConnectionHandler
-handle	src/http/HttpHandler.java	/^    HttpResponse handle(HttpRequest request);$/;"	m	interface:HttpHandler
+handle	src/http/HttpHandler.java	/^    default HttpResponse handle(HttpContext context) {$/;"	m	interface:HttpHandler
+handle	src/http/HttpHandler.java	/^    default HttpResponse handle(HttpRequest request) {$/;"	m	interface:HttpHandler
 handler.admin	src/handler/admin/StopHandler.java	/^package handler.admin;$/;"	p
 handler.misc	src/handler/misc/EchoHandler.java	/^package handler.misc;$/;"	p
 handler.misc	src/handler/misc/MethodNotAllowedHandler.java	/^package handler.misc;$/;"	p
 handler.misc	src/handler/misc/StaticHandler.java	/^package handler.misc;$/;"	p
-handler.misc	src/handler/misc/StopHandler.java	/^package handler.misc;$/;"	p
 handler.permissions	src/handler/permissions/UserPermissionCreateHandler.java	/^package handler.permissions;$/;"	p
 handler.user	src/handler/user/AuthenticateHandler.java	/^package handler.user;$/;"	p
 handler.user	src/handler/user/CreateUserHandler.java	/^package handler.user;$/;"	p
@@ -83,6 +81,7 @@ handler.user	src/handler/user/DeleteUserHandler.java	/^package handler.user;$/;"
 handler.user	src/handler/user/UpdateUserHandler.java	/^package handler.user;$/;"	p
 headers	src/http/HttpResponse.java	/^    private final HttpHeaders headers;$/;"	f	class:HttpResponse	file:
 headers	src/http/HttpResponse.java	/^    public HttpHeaders headers() {$/;"	m	class:HttpResponse
+http	src/http/HttpContext.java	/^package http;$/;"	p
 http	src/http/HttpForm.java	/^package http;$/;"	p
 http	src/http/HttpHandler.java	/^package http;$/;"	p
 http	src/http/HttpHeaders.java	/^package http;$/;"	p
@@ -100,6 +99,9 @@ model	src/model/User.java	/^package model;$/;"	p
 model	src/model/UserPermission.java	/^package model;$/;"	p
 selectMany	src/db/Database.java	/^    <T> List<T> selectMany(ConnectionHandler<PreparedStatement> handler, ResultSetDeserializer<T> deserializer) {$/;"	m	class:Database
 selectOne	src/db/Database.java	/^    <T> Optional<T> selectOne(ConnectionHandler<PreparedStatement> handler, ResultSetDeserializer<T> deserializer) {$/;"	m	class:Database
+session	src/Session/Session.java	/^package session;$/;"	p
+session	src/Session/SessionKey.java	/^package session;$/;"	p
+session	src/Session/SessionManager.java	/^package session;$/;"	p
 setup	src/db/Database.java	/^    public void setup() {$/;"	m	class:Database
 source	src/db/Database.java	/^    private final DataSource source;$/;"	f	class:Database	file:
 status	src/http/HttpResponse.java	/^    private final HttpStatus status;$/;"	f	class:HttpResponse	file:

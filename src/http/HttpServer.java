@@ -41,9 +41,11 @@ public record HttpServer(int port, List<HttpHandler> handlers, Database database
                     headers.put("server", "i2n");
                     headers.put("date", DATE_FORMATTER.format(Instant.now()));
                     headers.put("content-length", Integer.toString(response.body().length));
-                    headers.put("cookie", response.cookies().entrySet().stream()
-                            .map(cookie -> String.format("%s=%s", cookie.getKey(), cookie.getValue()))
-                            .collect(Collectors.joining("; ")));
+                    if (!response.cookies().isEmpty()) {
+                        headers.put("set-cookie", response.cookies().entrySet().stream()
+                                .map(cookie -> String.format("%s=%s", cookie.getKey(), cookie.getValue()))
+                                .collect(Collectors.joining("; ")));
+                    }
                     headers.putIfAbsent("content-type", "text/html; charset=UTF8");
                     headers.forEach((key, value) -> writer.printf("%s: %s%n", key, value));
 
@@ -76,9 +78,7 @@ public record HttpServer(int port, List<HttpHandler> handlers, Database database
         }
 
         try {
-            HttpResponse response = handler.get().handle(context);
-            request.cookies().forEach((key, value) -> response.cookies().putIfAbsent(key, value));
-            return response;
+            return handler.get().handle(context);
         } catch (Exception e) {
             return new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR, HttpHeaders.EMPTY, e);
         }

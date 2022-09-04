@@ -1,10 +1,9 @@
 package handler.misc;
 
 import http.*;
+import util.Resource;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 public record StaticHandler() implements HttpHandler {
 
@@ -17,20 +16,10 @@ public record StaticHandler() implements HttpHandler {
 
     @Override
     public HttpResponse handle(HttpRequest request) {
-        String file = request.path().substring(PREFIX.length());
-        final byte[] body;
-
-        try (InputStream resource = getClass().getResourceAsStream(file)) {
-            if (resource == null) {
-                return new HttpResponse(HttpStatus.NOT_FOUND);
-            }
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            resource.transferTo(out);
-            body = out.toByteArray();
+        try {
+            return new HttpResponse(HttpStatus.OK, HttpHeaders.EMPTY, Resource.getResource(request.path()));
         } catch (IOException e) {
-            return new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new HttpResponse(HttpStatus.NOT_FOUND);
         }
-
-        return new HttpResponse(HttpStatus.OK, HttpHeaders.EMPTY, body);
     }
 }

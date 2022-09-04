@@ -1,10 +1,12 @@
 package http;
 
 public interface HttpHandler {
+    @Deprecated
     default boolean accept(HttpRequest request) {
         return false;
     }
 
+    @Deprecated
     default HttpResponse handle(HttpRequest request) {
         return new HttpResponse(HttpStatus.METHOD_NOT_ALLOWED);
     }

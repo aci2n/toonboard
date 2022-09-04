@@ -6,10 +6,7 @@ import handler.misc.EchoHandler;
 import handler.misc.MethodNotAllowedHandler;
 import handler.misc.StaticHandler;
 import handler.permissions.UserPermissionCreateHandler;
-import handler.user.AuthenticateHandler;
-import handler.user.CreateUserHandler;
-import handler.user.DeleteUserHandler;
-import handler.user.UpdateUserHandler;
+import handler.user.*;
 import http.HttpHandler;
 import http.HttpServer;
 import session.SessionManager;
@@ -49,6 +46,7 @@ public record Launcher() {
                 new UpdateUserHandler(),
                 new AuthenticateHandler(),
                 new UserPermissionCreateHandler(),
+                new LoginPageHandler(),
                 new MethodNotAllowedHandler());
         HttpServer server = new HttpServer(arguments.port, handlers, db, new SessionManager());
 
