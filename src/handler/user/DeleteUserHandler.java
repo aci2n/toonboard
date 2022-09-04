@@ -18,7 +18,7 @@ public record DeleteUserHandler(Database db) implements HttpHandler {
             return new HttpResponse(HttpStatus.BAD_REQUEST);
         }
 
-        db.users().delete(new User(form.get("name")));
+        db.users.delete(new User(form.get("name")));
 
         return new HttpResponse(HttpStatus.OK);
     }

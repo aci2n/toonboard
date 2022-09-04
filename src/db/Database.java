@@ -12,22 +12,22 @@ import java.util.Optional;
 
 public final class Database {
     private final DataSource source;
-    private final UserDAO users;
+    public final UserDAO users;
+    public final UserPermissionsDAO userPermissions;
 
     public Database(String database) {
         SQLiteDataSource source = new SQLiteDataSource();
         source.setUrl(JDBC.PREFIX + database);
         source.setDatabaseName(database);
+
         this.source = source;
         this.users = new UserDAO(this);
+        this.userPermissions = new UserPermissionsDAO(this);
     }
 
     public void setup() {
         users.createTable();
-    }
-
-    public UserDAO users() {
-        return users;
+        userPermissions.createTable();
     }
 
     public <T> T withConnection(ConnectionHandler<T> handler) {

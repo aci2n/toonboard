@@ -1,4 +1,4 @@
 package Session;
 
-public record Session(SessionKey key) {
+public record Session(SessionKey key, String user) {
 }

@@ -3,15 +3,17 @@ package http;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public record HttpRequest(StartLine startLine, HttpHeaders headers, byte[] body) {
-    private final static Pattern START_LINE_PATTERN = Pattern.compile("(.*) (.*) (.*)");
-    private final static Pattern HEADER_PATTERN = Pattern.compile("(.*): (.*)");
+public record HttpRequest(StartLine startLine, HttpHeaders headers, Map<String, String> cookies, byte[] body) {
+    private final static Pattern START_LINE_PATTERN = Pattern.compile("([^\s]+) ([^\s]+) ([^\s]+)");
+    private final static Pattern HEADER_PATTERN = Pattern.compile("([^:]+): (.+)");
+    private final static Pattern COOKIE_PATTERN = Pattern.compile("([^=]+)=([^;]+);?\s*");
 
     public record StartLine(HttpMethod method, String path, String version) {
     }
@@ -23,6 +25,7 @@ public record HttpRequest(StartLine startLine, HttpHeaders headers, byte[] body)
         int contentLength = 0;
         Map<String, String> headers = new HashMap<>();
         StartLine startLine = null;
+        Map<String, String> cookies = new HashMap<>();
         int read;
 
         while ((body == null || body.hasRemaining()) && (read = inputStream.read(buffer)) >= 0) {
@@ -57,6 +60,11 @@ public record HttpRequest(StartLine startLine, HttpHeaders headers, byte[] body)
                                 headers.put(key, value);
                                 if ("content-length".equals(key)) {
                                     contentLength = Integer.parseInt(value);
+                                } else if ("cookie".equals(key)) {
+                                    Matcher cmatcher = COOKIE_PATTERN.matcher(value);
+                                    while (cmatcher.find()) {
+                                        cookies.put(cmatcher.group(1), cmatcher.group(2));
+                                    }
                                 }
                             } else {
                                 throw new IOException("invalid header");
@@ -80,7 +88,7 @@ public record HttpRequest(StartLine startLine, HttpHeaders headers, byte[] body)
             throw new IOException("incomplete request");
         }
 
-        return new HttpRequest(startLine, new HttpHeaders(headers), body.array());
+        return new HttpRequest(startLine, new HttpHeaders(headers), Collections.unmodifiableMap(cookies), body.array());
     }
 
     public HttpMethod method() {

@@ -16,7 +16,7 @@ public class UserDAO {
         this.db = db;
     }
 
-    public void createTable() {
+    void createTable() {
         db.withConnection(connection -> {
             Statement statement = connection.createStatement();
             statement.executeUpdate("""
@@ -31,7 +31,7 @@ public class UserDAO {
     public void insert(User user) {
         db.withConnection(connection -> {
             PreparedStatement stmt = connection.prepareStatement("""
-                    insert into users (name, password)
+                    insert or ignore into users (name, password)
                     values (?, ?)""");
             stmt.setString(1, user.name());
             stmt.setBytes(2, user.password());

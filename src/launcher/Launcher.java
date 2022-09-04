@@ -3,6 +3,7 @@ package launcher;
 import Session.SessionManager;
 import db.Database;
 import handler.misc.*;
+import handler.permissions.UserPermissionCreateHandler;
 import handler.user.AuthenticateHandler;
 import handler.user.CreateUserHandler;
 import handler.user.DeleteUserHandler;
@@ -35,7 +36,7 @@ public record Launcher() {
         Arguments arguments = Arguments.from(args);
         AtomicBoolean cancel = new AtomicBoolean(false);
         Database db = new Database("toonboard.db");
-        SessionManager sessionManager = new SessionManager();
+        SessionManager sm = new SessionManager();
         List<HttpHandler> handlers = List.of(
                 new StaticHandler(),
                 new StopHandler(cancel),
@@ -43,7 +44,8 @@ public record Launcher() {
                 new CreateUserHandler(db),
                 new DeleteUserHandler(db),
                 new UpdateUserHandler(db),
-                new AuthenticateHandler(db, sessionManager),
+                new AuthenticateHandler(db, sm),
+                new UserPermissionCreateHandler(db, sm),
                 new MethodNotAllowedHandler());
         HttpServer server = new HttpServer(arguments.port, handlers);
 

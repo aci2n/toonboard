@@ -73,7 +73,9 @@ public record HttpServer(int port, List<HttpHandler> handlers) {
         }
 
         try {
-            return handler.get().handle(request);
+            HttpResponse response = handler.get().handle(request);
+            request.cookies().forEach((key, value) -> response.getCookies().putIfAbsent(key, value));
+            return response;
         } catch (Exception e) {
             return new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR, HttpHeaders.EMPTY, e);
         }

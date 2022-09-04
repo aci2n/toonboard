@@ -18,7 +18,7 @@ public record UpdateUserHandler(Database db) implements HttpHandler {
             return new HttpResponse(HttpStatus.BAD_REQUEST);
         }
 
-        db.users().update(new User(form.get("name"), form.get("password")));
+        db.users.update(new User(form.get("name"), form.get("password")));
 
         return new HttpResponse(HttpStatus.OK);
     }

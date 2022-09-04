@@ -8,7 +8,7 @@ CONNECT	src/http/HttpMethod.java	/^    CONNECT$/;"	e	enum:HttpMethod	file:
 ConnectionHandler	src/db/ConnectionHandler.java	/^public interface ConnectionHandler<T> {$/;"	i
 Crypto	src/util/Crypto.java	/^public record Crypto() {$/;"	m
 DELETE	src/http/HttpMethod.java	/^    DELETE,$/;"	e	enum:HttpMethod	file:
-Database	src/db/Database.java	/^    public Database(String url) {$/;"	m	class:Database
+Database	src/db/Database.java	/^    public Database(String database) {$/;"	m	class:Database
 Database	src/db/Database.java	/^public final class Database {$/;"	c
 GET	src/http/HttpMethod.java	/^    GET,$/;"	e	enum:HttpMethod	file:
 HEAD	src/http/HttpMethod.java	/^    HEAD,$/;"	e	enum:HttpMethod	file:
@@ -61,7 +61,6 @@ handle	src/http/HttpHandler.java	/^    HttpResponse handle(HttpRequest request);
 handler.admin	src/handler/admin/StopHandler.java	/^package handler.admin;$/;"	p
 handler.misc	src/handler/misc/EchoHandler.java	/^package handler.misc;$/;"	p
 handler.misc	src/handler/misc/MethodNotAllowedHandler.java	/^package handler.misc;$/;"	p
-handler.misc	src/handler/misc/SQLiteHandler.java	/^package handler.misc;$/;"	p
 handler.misc	src/handler/misc/StaticHandler.java	/^package handler.misc;$/;"	p
 handler.misc	src/handler/misc/StopHandler.java	/^package handler.misc;$/;"	p
 handler.user	src/handler/user/AuthenticateHandler.java	/^package handler.user;$/;"	p
@@ -84,10 +83,10 @@ model	src/model/User.java	/^package model;$/;"	p
 selectMany	src/db/Database.java	/^    <T> List<T> selectMany(ConnectionHandler<PreparedStatement> handler, ResultSetDeserializer<T> deserializer) {$/;"	m	class:Database
 selectOne	src/db/Database.java	/^    <T> Optional<T> selectOne(ConnectionHandler<PreparedStatement> handler, ResultSetDeserializer<T> deserializer) {$/;"	m	class:Database
 setup	src/db/Database.java	/^    public void setup() {$/;"	m	class:Database
+source	src/db/Database.java	/^    private final DataSource source;$/;"	f	class:Database	file:
 status	src/http/HttpResponse.java	/^    private final HttpStatus status;$/;"	f	class:HttpResponse	file:
 status	src/http/HttpResponse.java	/^    public HttpStatus status() {$/;"	m	class:HttpResponse
 update	src/db/UserDAO.java	/^    public void update(User user) {$/;"	m	class:UserDAO
-url	src/db/Database.java	/^    private final String url;$/;"	f	class:Database	file:
 users	src/db/Database.java	/^    private final UserDAO users;$/;"	f	class:Database	file:
 users	src/db/Database.java	/^    public UserDAO users() {$/;"	m	class:Database
 util	src/util/Crypto.java	/^package util;$/;"	p
