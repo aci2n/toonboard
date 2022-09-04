@@ -34,11 +34,10 @@ public record Launcher() {
     public static void main(String[] args) throws IOException {
         Arguments arguments = Arguments.from(args);
         AtomicBoolean cancel = new AtomicBoolean(false);
-        Database db = new Database("jdbc:sqlite:toonboard.db");
+        Database db = new Database("toonboard.db");
         SessionManager sessionManager = new SessionManager();
         List<HttpHandler> handlers = List.of(
                 new StaticHandler(),
-                new SQLiteHandler(),
                 new StopHandler(cancel),
                 new EchoHandler(),
                 new CreateUserHandler(db),

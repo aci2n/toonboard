@@ -7,7 +7,6 @@
 CONNECT	src/http/HttpMethod.java	/^    CONNECT$/;"	e	enum:HttpMethod	file:
 ConnectionHandler	src/db/ConnectionHandler.java	/^public interface ConnectionHandler<T> {$/;"	i
 Crypto	src/util/Crypto.java	/^public record Crypto() {$/;"	m
-DAO	src/db/DAO.java	/^public interface DAO<T> {$/;"	i
 DELETE	src/http/HttpMethod.java	/^    DELETE,$/;"	e	enum:HttpMethod	file:
 Database	src/db/Database.java	/^    public Database(String url) {$/;"	m	class:Database
 Database	src/db/Database.java	/^public final class Database {$/;"	c
@@ -29,6 +28,7 @@ Launcher	src/launcher/Launcher.java	/^public record Launcher() {$/;"	m
 Logging	src/util/Logging.java	/^public record Logging() {$/;"	m
 PATCH	src/http/HttpMethod.java	/^    PATCH,$/;"	e	enum:HttpMethod	file:
 POST	src/http/HttpMethod.java	/^    POST,$/;"	e	enum:HttpMethod	file:
+ResultSetDeserializer	src/db/ResultSetDeserializer.java	/^public interface ResultSetDeserializer<T> {$/;"	i
 Session	src/Session/Session.java	/^package Session;$/;"	p
 Session	src/Session/Session.java	/^public record Session(SessionKey key) {$/;"	m
 Session	src/Session/SessionKey.java	/^package Session;$/;"	p
@@ -37,26 +37,24 @@ SessionKey	src/Session/SessionKey.java	/^public record SessionKey(UUID uuid) {$/
 SessionManager	src/Session/SessionManager.java	/^public record SessionManager(ConcurrentMap<SessionKey, Session> sessions) {$/;"	m
 User	src/model/User.java	/^public record User(String name, byte[] password) {$/;"	m
 UserDAO	src/db/UserDAO.java	/^    UserDAO(Database db) {$/;"	m	class:UserDAO
-UserDAO	src/db/UserDAO.java	/^class UserDAO implements DAO<User> {$/;"	c
+UserDAO	src/db/UserDAO.java	/^public class UserDAO {$/;"	c
 accept	src/http/HttpHandler.java	/^    boolean accept(HttpRequest request);$/;"	m	interface:HttpHandler
 addCookie	src/http/HttpResponse.java	/^    public void addCookie(String key, String value) {$/;"	m	class:HttpResponse
+all	src/db/UserDAO.java	/^    public List<User> all() {$/;"	m	class:UserDAO
 body	src/http/HttpResponse.java	/^    private final byte[] body;$/;"	f	class:HttpResponse	file:
 body	src/http/HttpResponse.java	/^    public byte[] body() {$/;"	m	class:HttpResponse
+byName	src/db/UserDAO.java	/^    public Optional<User> byName(String name) {$/;"	m	class:UserDAO
 cookies	src/http/HttpResponse.java	/^    private final Map<String, String> cookies;$/;"	f	class:HttpResponse	file:
-createTable	src/db/DAO.java	/^    void createTable();$/;"	m	interface:DAO
 createTable	src/db/UserDAO.java	/^    public void createTable() {$/;"	m	class:UserDAO
-dao	src/db/Database.java	/^    private <T> DAO<T> dao(Class<T> klass) {$/;"	m	class:Database	file:
-dao	src/db/Database.java	/^    private <T> DAO<T> dao(T obj) {$/;"	m	class:Database	file:
 db	src/db/ConnectionHandler.java	/^package db;$/;"	p
-db	src/db/DAO.java	/^package db;$/;"	p
 db	src/db/Database.java	/^package db;$/;"	p
+db	src/db/ResultSetDeserializer.java	/^package db;$/;"	p
 db	src/db/UserDAO.java	/^    private final Database db;$/;"	f	class:UserDAO	file:
 db	src/db/UserDAO.java	/^package db;$/;"	p
-delete	src/db/DAO.java	/^    void delete(T value);$/;"	m	interface:DAO
-delete	src/db/Database.java	/^    public <T> void delete(T value) {$/;"	m	class:Database
-delete	src/db/UserDAO.java	/^    public void delete(User value) {$/;"	m	class:UserDAO
-deserialize	src/db/DAO.java	/^    T deserialize(ResultSet rs);$/;"	m	interface:DAO
-deserialize	src/db/UserDAO.java	/^    public User deserialize(ResultSet rs) {$/;"	m	class:UserDAO
+delete	src/db/UserDAO.java	/^    public void delete(User user) {$/;"	m	class:UserDAO
+deserialize	src/db/ResultSetDeserializer.java	/^    T deserialize(ResultSet rs) throws SQLException;$/;"	m	interface:ResultSetDeserializer
+deserialize	src/db/UserDAO.java	/^    public User deserialize(ResultSet rs) throws SQLException {$/;"	m	class:UserDAO
+exists	src/db/UserDAO.java	/^    public boolean exists(User user) {$/;"	m	class:UserDAO
 getCookies	src/http/HttpResponse.java	/^    public Map<String, String> getCookies() {$/;"	m	class:HttpResponse
 handle	src/db/ConnectionHandler.java	/^    T handle(Connection connection) throws SQLException;$/;"	m	interface:ConnectionHandler
 handle	src/http/HttpHandler.java	/^    HttpResponse handle(HttpRequest request);$/;"	m	interface:HttpHandler
@@ -80,21 +78,18 @@ http	src/http/HttpRequest.java	/^package http;$/;"	p
 http	src/http/HttpResponse.java	/^package http;$/;"	p
 http	src/http/HttpServer.java	/^package http;$/;"	p
 http	src/http/HttpStatus.java	/^package http;$/;"	p
-insert	src/db/DAO.java	/^    void insert(T value);$/;"	m	interface:DAO
-insert	src/db/Database.java	/^    public <T> void insert(T value) {$/;"	m	class:Database
-insert	src/db/UserDAO.java	/^    public void insert(User value) {$/;"	m	class:UserDAO
+insert	src/db/UserDAO.java	/^    public void insert(User user) {$/;"	m	class:UserDAO
 launcher	src/launcher/Launcher.java	/^package launcher;$/;"	p
-mappings	src/db/Database.java	/^    private final Map<Class<?>, DAO<?>> mappings;$/;"	f	class:Database	file:
 model	src/model/User.java	/^package model;$/;"	p
-selectMany	src/db/Database.java	/^    public <T> List<T> selectMany(Class<T> klass, ConnectionHandler<PreparedStatement> handler) {$/;"	m	class:Database
-selectOne	src/db/Database.java	/^    public <T> Optional<T> selectOne(Class<T> klass, ConnectionHandler<PreparedStatement> handler) {$/;"	m	class:Database
+selectMany	src/db/Database.java	/^    <T> List<T> selectMany(ConnectionHandler<PreparedStatement> handler, ResultSetDeserializer<T> deserializer) {$/;"	m	class:Database
+selectOne	src/db/Database.java	/^    <T> Optional<T> selectOne(ConnectionHandler<PreparedStatement> handler, ResultSetDeserializer<T> deserializer) {$/;"	m	class:Database
 setup	src/db/Database.java	/^    public void setup() {$/;"	m	class:Database
 status	src/http/HttpResponse.java	/^    private final HttpStatus status;$/;"	f	class:HttpResponse	file:
 status	src/http/HttpResponse.java	/^    public HttpStatus status() {$/;"	m	class:HttpResponse
-update	src/db/DAO.java	/^    void update(T value);$/;"	m	interface:DAO
-update	src/db/Database.java	/^    public <T> void update(T value) {$/;"	m	class:Database
-update	src/db/UserDAO.java	/^    public void update(User value) {$/;"	m	class:UserDAO
+update	src/db/UserDAO.java	/^    public void update(User user) {$/;"	m	class:UserDAO
 url	src/db/Database.java	/^    private final String url;$/;"	f	class:Database	file:
+users	src/db/Database.java	/^    private final UserDAO users;$/;"	f	class:Database	file:
+users	src/db/Database.java	/^    public UserDAO users() {$/;"	m	class:Database
 util	src/util/Crypto.java	/^package util;$/;"	p
 util	src/util/Logging.java	/^package util;$/;"	p
 withConnection	src/db/Database.java	/^    public <T> T withConnection(ConnectionHandler<T> handler) {$/;"	m	class:Database

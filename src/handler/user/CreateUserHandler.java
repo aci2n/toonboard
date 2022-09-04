@@ -20,6 +20,6 @@ public record CreateUserHandler(Database db) implements HttpHandler {
 
         db.users().insert(new User(form.get("name"), form.get("password")));
 
-        return new HttpResponse(HttpStatus.OK);
+        return new HttpResponse(HttpStatus.CREATED);
     }
 }
