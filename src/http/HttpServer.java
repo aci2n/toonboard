@@ -16,6 +16,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public record HttpServer(int port, List<HttpHandler> handlers) {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH).withZone(ZoneId.of("GMT"));
@@ -38,6 +39,9 @@ public record HttpServer(int port, List<HttpHandler> handlers) {
                     headers.put("server", "i2n");
                     headers.put("date", DATE_FORMATTER.format(Instant.now()));
                     headers.put("content-length", Integer.toString(response.body().length));
+                    headers.put("cookie", response.getCookies().entrySet().stream()
+                            .map(cookie -> String.format("%s=%s", cookie.getKey(), cookie.getValue()))
+                            .collect(Collectors.joining("; ")));
                     headers.putIfAbsent("content-type", "text/html; charset=UTF8");
                     headers.forEach((key, value) -> writer.printf("%s: %s%n", key, value));
 
@@ -71,7 +75,7 @@ public record HttpServer(int port, List<HttpHandler> handlers) {
         try {
             return handler.get().handle(request);
         } catch (Exception e) {
-            return new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR, HttpHeaders.EMPTY, e);
         }
     }
 }

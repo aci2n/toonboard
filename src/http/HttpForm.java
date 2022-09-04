@@ -30,4 +30,13 @@ public record HttpForm(Map<String, String> entries) {
     public String get(String key) {
         return entries.get(key);
     }
+
+    public boolean has(String... keys) {
+        for (String key : keys) {
+            if (!has(key)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

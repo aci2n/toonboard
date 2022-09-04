@@ -98,4 +98,12 @@ public record HttpRequest(StartLine startLine, HttpHeaders headers, byte[] body)
     public boolean isPost() {
         return HttpMethod.POST.equals(method());
     }
+
+    public boolean isDelete() {
+        return HttpMethod.DELETE.equals(method());
+    }
+
+    public boolean isPatch() {
+        return HttpMethod.PATCH.equals(method());
+    }
 }

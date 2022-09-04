@@ -4,6 +4,8 @@
       <root url="jar://$PROJECT_DIR$/vendor/sqlite-jdbc-3.39.2.1.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.ideaLibSources/sqlite-jdbc-3.39.2.1-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>

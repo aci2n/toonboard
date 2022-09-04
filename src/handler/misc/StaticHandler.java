@@ -1,11 +1,10 @@
-package handler;
+package handler.misc;
 
 import http.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
 
 public record StaticHandler() implements HttpHandler {
 
@@ -19,17 +18,6 @@ public record StaticHandler() implements HttpHandler {
     @Override
     public HttpResponse handle(HttpRequest request) {
         String file = request.path().substring(PREFIX.length());
-
-        if (file.startsWith("/")) {
-            file = file.substring(1);
-        }
-        if (file.isEmpty()) {
-            file = "home.html";
-        }
-        if (!file.contains(".")) {
-            file += ".html";
-        }
-
         final byte[] body;
 
         try (InputStream resource = getClass().getResourceAsStream(file)) {

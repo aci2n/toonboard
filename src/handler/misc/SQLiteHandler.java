@@ -1,4 +1,4 @@
-package handler;
+package handler.misc;
 
 import http.*;
 

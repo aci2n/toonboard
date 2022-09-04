@@ -1,8 +1,10 @@
-package handler;
+package handler.admin;
 
-import http.*;
+import http.HttpHandler;
+import http.HttpRequest;
+import http.HttpResponse;
+import http.HttpStatus;
 
-import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public record StopHandler(AtomicBoolean cancel) implements HttpHandler {
