@@ -4,15 +4,16 @@ import db.Database;
 import http.*;
 import model.User;
 
-public record CreateUserHandler(Database db) implements HttpHandler {
+public record CreateUserHandler() implements HttpHandler {
     @Override
     public boolean accept(HttpRequest request) {
         return request.isPost() && request.path().equals("/user");
     }
 
     @Override
-    public HttpResponse handle(HttpRequest request) {
-        HttpForm form = HttpForm.from(request.body());
+    public HttpResponse handle(HttpContext context) {
+        Database db = context.database();
+        HttpForm form = context.form();
 
         if (!form.has("name") || !form.has("password")) {
             return new HttpResponse(HttpStatus.BAD_REQUEST);

@@ -1,7 +1,6 @@
-package Session;
+package session;
 
 import http.HttpRequest;
-import http.HttpResponse;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -13,10 +12,9 @@ public record SessionManager(ConcurrentMap<SessionKey, Session> sessions) {
         this(new ConcurrentHashMap<>());
     }
 
-    public Session newSession(HttpResponse response, String user) {
+    public Session newSession(String user) {
         Session session = new Session(new SessionKey(UUID.randomUUID()), user);
         sessions.put(session.key(), session);
-        response.addCookie("session", session.key().uuid().toString());
         return session;
     }
 

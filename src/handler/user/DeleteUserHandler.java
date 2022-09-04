@@ -4,15 +4,16 @@ import db.Database;
 import http.*;
 import model.User;
 
-public record DeleteUserHandler(Database db) implements HttpHandler {
+public record DeleteUserHandler() implements HttpHandler {
     @Override
     public boolean accept(HttpRequest request) {
         return request.isDelete() && request.path().equals("/user");
     }
 
     @Override
-    public HttpResponse handle(HttpRequest request) {
-        HttpForm form = HttpForm.from(request.body());
+    public HttpResponse handle(HttpContext context) {
+        HttpForm form = context.form();
+        Database db = context.database();
 
         if (!form.has("name")) {
             return new HttpResponse(HttpStatus.BAD_REQUEST);

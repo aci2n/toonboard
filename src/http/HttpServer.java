@@ -1,5 +1,7 @@
 package http;
 
+import db.Database;
+import session.SessionManager;
 import util.Logging;
 
 import java.io.IOException;
@@ -18,7 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-public record HttpServer(int port, List<HttpHandler> handlers) {
+public record HttpServer(int port, List<HttpHandler> handlers, Database database, SessionManager sessionManager) {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH).withZone(ZoneId.of("GMT"));
     private static final Logger LOGGER = Logging.get(HttpServer.class);
 
@@ -39,7 +41,7 @@ public record HttpServer(int port, List<HttpHandler> handlers) {
                     headers.put("server", "i2n");
                     headers.put("date", DATE_FORMATTER.format(Instant.now()));
                     headers.put("content-length", Integer.toString(response.body().length));
-                    headers.put("cookie", response.getCookies().entrySet().stream()
+                    headers.put("cookie", response.cookies().entrySet().stream()
                             .map(cookie -> String.format("%s=%s", cookie.getKey(), cookie.getValue()))
                             .collect(Collectors.joining("; ")));
                     headers.putIfAbsent("content-type", "text/html; charset=UTF8");
@@ -66,15 +68,16 @@ public record HttpServer(int port, List<HttpHandler> handlers) {
             return new HttpResponse(HttpStatus.BAD_REQUEST);
         }
 
-        Optional<HttpHandler> handler = handlers.stream().filter(h -> h.accept(request)).findFirst();
+        HttpContext context = new HttpContext(request, database, sessionManager);
+        Optional<HttpHandler> handler = handlers.stream().filter(h -> h.accept(context)).findFirst();
 
         if (handler.isEmpty()) {
             throw new RuntimeException("no handlers found for request");
         }
 
         try {
-            HttpResponse response = handler.get().handle(request);
-            request.cookies().forEach((key, value) -> response.getCookies().putIfAbsent(key, value));
+            HttpResponse response = handler.get().handle(context);
+            request.cookies().forEach((key, value) -> response.cookies().putIfAbsent(key, value));
             return response;
         } catch (Exception e) {
             return new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR, HttpHeaders.EMPTY, e);

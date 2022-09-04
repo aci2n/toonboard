@@ -1,19 +1,22 @@
 package handler.user;
 
-import Session.SessionManager;
 import db.Database;
 import http.*;
 import model.User;
+import session.Session;
+import session.SessionManager;
 
-public record AuthenticateHandler(Database db, SessionManager sm) implements HttpHandler {
+public record AuthenticateHandler() implements HttpHandler {
     @Override
     public boolean accept(HttpRequest request) {
         return request.isPost() && request.path().equals("/auth");
     }
 
     @Override
-    public HttpResponse handle(HttpRequest request) {
-        HttpForm form = HttpForm.from(request.body());
+    public HttpResponse handle(HttpContext context) {
+        HttpForm form = context.form();
+        Database db = context.database();
+        SessionManager sm = context.sessionManager();
 
         if (!form.has("name", "password")) {
             return new HttpResponse(HttpStatus.BAD_REQUEST);
@@ -26,7 +29,9 @@ public record AuthenticateHandler(Database db, SessionManager sm) implements Htt
         }
 
         HttpResponse response = new HttpResponse(HttpStatus.OK);
-        sm.newSession(response, user.name());
+        Session session = sm.newSession(user.name());
+
+        response.cookies().put("session", session.key().uuid().toString());
 
         return response;
     }

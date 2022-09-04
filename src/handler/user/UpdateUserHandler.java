@@ -4,15 +4,16 @@ import db.Database;
 import http.*;
 import model.User;
 
-public record UpdateUserHandler(Database db) implements HttpHandler {
+public record UpdateUserHandler() implements HttpHandler {
     @Override
     public boolean accept(HttpRequest request) {
         return request.isPatch() && request.path().equals("/user");
     }
 
     @Override
-    public HttpResponse handle(HttpRequest request) {
-        HttpForm form = HttpForm.from(request.body());
+    public HttpResponse handle(HttpContext context) {
+        HttpForm form = context.form();
+        Database db = context.database();
 
         if (!form.has("name") || !form.has("password")) {
             return new HttpResponse(HttpStatus.BAD_REQUEST);

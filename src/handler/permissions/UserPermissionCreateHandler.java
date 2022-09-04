@@ -1,23 +1,24 @@
 package handler.permissions;
 
-import Session.Session;
-import Session.SessionManager;
 import db.Database;
 import http.*;
 import model.Permission;
 import model.UserPermission;
+import session.Session;
 
 import java.util.Optional;
 
-public record UserPermissionCreateHandler(Database db, SessionManager sm) implements HttpHandler {
+public record UserPermissionCreateHandler() implements HttpHandler {
     @Override
     public boolean accept(HttpRequest request) {
         return request.isPost() && request.path().equals("/user_permission");
     }
 
     @Override
-    public HttpResponse handle(HttpRequest request) {
-        Optional<Session> session = sm.getSession(request);
+    public HttpResponse handle(HttpContext context) {
+        HttpRequest request = context.request();
+        Optional<Session> session = context.session();
+        Database db = context.database();
 
         if (session.isEmpty()) {
             return new HttpResponse(HttpStatus.UNAUTHORIZED);

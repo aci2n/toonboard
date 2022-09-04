@@ -1,8 +1,10 @@
 package launcher;
 
-import Session.SessionManager;
 import db.Database;
-import handler.misc.*;
+import handler.admin.StopHandler;
+import handler.misc.EchoHandler;
+import handler.misc.MethodNotAllowedHandler;
+import handler.misc.StaticHandler;
 import handler.permissions.UserPermissionCreateHandler;
 import handler.user.AuthenticateHandler;
 import handler.user.CreateUserHandler;
@@ -10,6 +12,7 @@ import handler.user.DeleteUserHandler;
 import handler.user.UpdateUserHandler;
 import http.HttpHandler;
 import http.HttpServer;
+import session.SessionManager;
 
 import java.io.IOException;
 import java.util.List;
@@ -41,13 +44,13 @@ public record Launcher() {
                 new StaticHandler(),
                 new StopHandler(cancel),
                 new EchoHandler(),
-                new CreateUserHandler(db),
-                new DeleteUserHandler(db),
-                new UpdateUserHandler(db),
-                new AuthenticateHandler(db, sm),
-                new UserPermissionCreateHandler(db, sm),
+                new CreateUserHandler(),
+                new DeleteUserHandler(),
+                new UpdateUserHandler(),
+                new AuthenticateHandler(),
+                new UserPermissionCreateHandler(),
                 new MethodNotAllowedHandler());
-        HttpServer server = new HttpServer(arguments.port, handlers);
+        HttpServer server = new HttpServer(arguments.port, handlers, db, new SessionManager());
 
         db.setup();
 

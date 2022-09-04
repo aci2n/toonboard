@@ -1,7 +1,19 @@
 package http;
 
 public interface HttpHandler {
-    boolean accept(HttpRequest request);
+    default boolean accept(HttpRequest request) {
+        return false;
+    }
 
-    HttpResponse handle(HttpRequest request);
+    default HttpResponse handle(HttpRequest request) {
+        return new HttpResponse(HttpStatus.METHOD_NOT_ALLOWED);
+    }
+
+    default boolean accept(HttpContext context) {
+        return accept(context.request());
+    }
+
+    default HttpResponse handle(HttpContext context) {
+        return handle(context.request());
+    }
 }

@@ -42,11 +42,7 @@ public final class HttpResponse {
         return body;
     }
 
-    public void addCookie(String key, String value) {
-        cookies.put(key, value);
-    }
-
-    public Map<String, String> getCookies() {
+    public Map<String, String> cookies() {
         return cookies;
     }
 }
