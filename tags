@@ -1,0 +1,16 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+HttpRequest	src/http/HttpRequest.java	/^public record HttpRequest(String method, String path, String version, Map<String, String> headers, ByteBuffer body) {$/;"	m
+HttpResponse	src/http/HttpResponse.java	/^public record HttpResponse(int statusCode) {$/;"	m
+HttpServer	src/http/HttpServer.java	/^public record HttpServer(int port) {$/;"	m
+IntegerReader	src/util/IntegerReader.java	/^public record IntegerReader() {$/;"	m
+Launcher	src/launcher/Launcher.java	/^public record Launcher() {$/;"	m
+http	src/http/HttpRequest.java	/^package http;$/;"	p
+http	src/http/HttpResponse.java	/^package http;$/;"	p
+http	src/http/HttpServer.java	/^package http;$/;"	p
+launcher	src/launcher/Launcher.java	/^package launcher;$/;"	p
+util	src/util/IntegerReader.java	/^package util;$/;"	p
