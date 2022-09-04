@@ -1,10 +1,12 @@
 package launcher;
 
+import db.Database;
 import handler.*;
 import http.HttpHandler;
 import http.HttpServer;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -28,11 +30,13 @@ public record Launcher() {
     public static void main(String[] args) throws IOException {
         Arguments arguments = Arguments.from(args);
         AtomicBoolean cancel = new AtomicBoolean(false);
+        Database db = new Database("jdbc:sqlite:toonboard.db");
         List<HttpHandler> handlers = List.of(
                 new StaticHandler(),
                 new SQLiteHandler(),
                 new StopHandler(cancel),
                 new EchoHandler(),
+                new CreateUserHandler(db),
                 new MethodNotAllowedHandler());
         HttpServer server = new HttpServer(arguments.port, handlers);
 

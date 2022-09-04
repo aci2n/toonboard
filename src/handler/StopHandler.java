@@ -14,6 +14,6 @@ public record StopHandler(AtomicBoolean cancel) implements HttpHandler {
     @Override
     public HttpResponse handle(HttpRequest request) {
         cancel.set(true);
-        return new HttpResponse(HttpStatus.OK, HttpHeaders.EMPTY, ByteBuffer.allocate(0));
+        return new HttpResponse(HttpStatus.OK);
     }
 }

@@ -45,6 +45,6 @@ public record SQLiteHandler() implements HttpHandler {
             }
         }
 
-        return new HttpResponse(new HttpStatus(200, "OK"), new HttpHeaders(Map.of()), ByteBuffer.allocate(0));
+        return new HttpResponse(HttpStatus.OK);
     }
 }

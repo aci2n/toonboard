@@ -30,7 +30,7 @@ public record StaticHandler() implements HttpHandler {
             file += ".html";
         }
 
-        final ByteBuffer body;
+        final byte[] body;
 
         try (InputStream resource = getClass().getResourceAsStream(file)) {
             if (resource == null) {
@@ -38,7 +38,7 @@ public record StaticHandler() implements HttpHandler {
             }
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             resource.transferTo(out);
-            body = ByteBuffer.wrap(out.toByteArray());
+            body = out.toByteArray();
         } catch (IOException e) {
             return new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR);
         }

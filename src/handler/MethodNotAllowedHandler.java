@@ -12,6 +12,6 @@ public record MethodNotAllowedHandler() implements HttpHandler {
 
     @Override
     public HttpResponse handle(HttpRequest request) {
-        return new HttpResponse(HttpStatus.METHOD_NOT_ALLOWED, HttpHeaders.EMPTY, ByteBuffer.allocate(0));
+        return new HttpResponse(HttpStatus.METHOD_NOT_ALLOWED);
     }
 }

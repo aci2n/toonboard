@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public record HttpRequest(StartLine startLine, HttpHeaders headers, ByteBuffer body) {
+public record HttpRequest(StartLine startLine, HttpHeaders headers, byte[] body) {
     private final static Pattern START_LINE_PATTERN = Pattern.compile("(.*) (.*) (.*)");
     private final static Pattern HEADER_PATTERN = Pattern.compile("(.*): (.*)");
 
@@ -43,19 +43,18 @@ public record HttpRequest(StartLine startLine, HttpHeaders headers, ByteBuffer b
                         currentLine = new StringBuilder();
 
                         if (startLine == null) {
-                            Matcher methodMatcher = START_LINE_PATTERN.matcher(line);
-                            if (!methodMatcher.matches()) {
+                            Matcher matcher = START_LINE_PATTERN.matcher(line);
+                            if (!matcher.matches()) {
                                 throw new IOException("invalid method line");
                             }
-                            HttpMethod method = HttpMethod.valueOf(methodMatcher.group(1).toUpperCase(Locale.ROOT));
-                            startLine = new StartLine(method, methodMatcher.group(2), methodMatcher.group(3));
+                            HttpMethod method = HttpMethod.valueOf(matcher.group(1).toUpperCase(Locale.ROOT));
+                            startLine = new StartLine(method, matcher.group(2), matcher.group(3));
                         } else {
-                            Matcher headerMatcher = HEADER_PATTERN.matcher(line);
-                            if (headerMatcher.matches()) {
-                                String key = headerMatcher.group(1).toLowerCase(Locale.ROOT);
-                                String value = headerMatcher.group(2);
+                            Matcher matcher = HEADER_PATTERN.matcher(line);
+                            if (matcher.matches()) {
+                                String key = matcher.group(1).toLowerCase(Locale.ROOT);
+                                String value = matcher.group(2);
                                 headers.put(key, value);
-
                                 if ("content-length".equals(key)) {
                                     contentLength = Integer.parseInt(value);
                                 }
@@ -81,7 +80,7 @@ public record HttpRequest(StartLine startLine, HttpHeaders headers, ByteBuffer b
             throw new IOException("incomplete request");
         }
 
-        return new HttpRequest(startLine, new HttpHeaders(headers), body);
+        return new HttpRequest(startLine, new HttpHeaders(headers), body.array());
     }
 
     public HttpMethod method() {
@@ -97,6 +96,6 @@ public record HttpRequest(StartLine startLine, HttpHeaders headers, ByteBuffer b
     }
 
     public boolean isPost() {
-        return HttpMethod.GET.equals(method());
+        return HttpMethod.POST.equals(method());
     }
 }

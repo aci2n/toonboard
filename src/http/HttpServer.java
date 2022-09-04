@@ -37,14 +37,14 @@ public record HttpServer(int port, List<HttpHandler> handlers) {
                     Map<String, String> headers = new HashMap<>(response.headers().map());
                     headers.put("server", "i2n");
                     headers.put("date", DATE_FORMATTER.format(Instant.now()));
-                    headers.put("content-length", Integer.toString(response.body().array().length));
+                    headers.put("content-length", Integer.toString(response.body().length));
                     headers.putIfAbsent("content-type", "text/html; charset=UTF8");
                     headers.forEach((key, value) -> writer.printf("%s: %s%n", key, value));
 
                     writer.printf("%n");
                     writer.flush();
 
-                    clientSocket.getOutputStream().write(response.body().array());
+                    clientSocket.getOutputStream().write(response.body());
                     clientSocket.getOutputStream().flush();
                 } catch (IOException e) {
                     LOGGER.log(Level.WARNING, "HTTP request failed", e);

@@ -4,13 +4,40 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
-HttpRequest	src/http/HttpRequest.java	/^public record HttpRequest(String method, String path, String version, Map<String, String> headers, ByteBuffer body) {$/;"	m
-HttpResponse	src/http/HttpResponse.java	/^public record HttpResponse(int statusCode) {$/;"	m
-HttpServer	src/http/HttpServer.java	/^public record HttpServer(int port) {$/;"	m
-IntegerReader	src/util/IntegerReader.java	/^public record IntegerReader() {$/;"	m
+CONNECT	src/http/HttpMethod.java	/^    CONNECT$/;"	e	enum:HttpMethod	file:
+ConnectionHandler	src/db/ConnectionHandler.java	/^public interface ConnectionHandler<T> {$/;"	i
+DELETE	src/http/HttpMethod.java	/^    DELETE,$/;"	e	enum:HttpMethod	file:
+Database	src/db/Database.java	/^public record Database(String url) {$/;"	m
+GET	src/http/HttpMethod.java	/^    GET,$/;"	e	enum:HttpMethod	file:
+HEAD	src/http/HttpMethod.java	/^    HEAD,$/;"	e	enum:HttpMethod	file:
+HttpHandler	src/http/HttpHandler.java	/^public interface HttpHandler {$/;"	i
+HttpHeaders	src/http/HttpHeaders.java	/^public record HttpHeaders(Map<String, String> map) {$/;"	m
+HttpMethod	src/http/HttpMethod.java	/^public enum HttpMethod {$/;"	g
+HttpRequest	src/http/HttpRequest.java	/^public record HttpRequest(StartLine startLine, HttpHeaders headers, ByteBuffer body) {$/;"	m
+HttpResponse	src/http/HttpResponse.java	/^public record HttpResponse(HttpStatus status, HttpHeaders headers, ByteBuffer body) {$/;"	m
+HttpServer	src/http/HttpServer.java	/^public record HttpServer(int port, List<HttpHandler> handlers) {$/;"	m
+HttpStatus	src/http/HttpStatus.java	/^public record HttpStatus(int code, String description) {$/;"	m
 Launcher	src/launcher/Launcher.java	/^public record Launcher() {$/;"	m
+Logging	src/util/Logging.java	/^public record Logging() {$/;"	m
+PATCH	src/http/HttpMethod.java	/^    PATCH,$/;"	e	enum:HttpMethod	file:
+POST	src/http/HttpMethod.java	/^    POST,$/;"	e	enum:HttpMethod	file:
+accept	src/http/HttpHandler.java	/^    boolean accept(HttpRequest request);$/;"	m	interface:HttpHandler
+db	src/db/ConnectionHandler.java	/^package db;$/;"	p
+db	src/db/Database.java	/^package db;$/;"	p
+handle	src/db/ConnectionHandler.java	/^    T handle(Connection connection) throws SQLException;$/;"	m	interface:ConnectionHandler
+handle	src/http/HttpHandler.java	/^    HttpResponse handle(HttpRequest request);$/;"	m	interface:HttpHandler
+handler	src/handler/CreateUserHandler.java	/^package handler;$/;"	p
+handler	src/handler/EchoHandler.java	/^package handler;$/;"	p
+handler	src/handler/MethodNotAllowedHandler.java	/^package handler;$/;"	p
+handler	src/handler/SQLiteHandler.java	/^package handler;$/;"	p
+handler	src/handler/StaticHandler.java	/^package handler;$/;"	p
+handler	src/handler/StopHandler.java	/^package handler;$/;"	p
+http	src/http/HttpHandler.java	/^package http;$/;"	p
+http	src/http/HttpHeaders.java	/^package http;$/;"	p
+http	src/http/HttpMethod.java	/^package http;$/;"	p
 http	src/http/HttpRequest.java	/^package http;$/;"	p
 http	src/http/HttpResponse.java	/^package http;$/;"	p
 http	src/http/HttpServer.java	/^package http;$/;"	p
+http	src/http/HttpStatus.java	/^package http;$/;"	p
 launcher	src/launcher/Launcher.java	/^package launcher;$/;"	p
-util	src/util/IntegerReader.java	/^package util;$/;"	p
+util	src/util/Logging.java	/^package util;$/;"	p
