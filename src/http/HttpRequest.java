@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public record HttpRequest(StartLine startLine, HttpHeaders headers, Map<String, String> cookies, byte[] body) {
+public record HttpRequest(StartLine startLine, HttpHeaders headers, HttpCookies cookies, byte[] body) {
     private final static Pattern START_LINE_PATTERN = Pattern.compile("([^\s]+) ([^\s]+) ([^\s]+)");
     private final static Pattern HEADER_PATTERN = Pattern.compile("([^:]+): (.+)");
     private final static Pattern COOKIE_PATTERN = Pattern.compile("([^=]+)=([^;]+);?\s*");
@@ -88,7 +88,11 @@ public record HttpRequest(StartLine startLine, HttpHeaders headers, Map<String, 
             throw new IOException("incomplete request");
         }
 
-        return new HttpRequest(startLine, new HttpHeaders(headers), Collections.unmodifiableMap(cookies), body.array());
+        return new HttpRequest(
+                startLine,
+                new HttpHeaders(Collections.unmodifiableMap(headers)),
+                new HttpCookies(Collections.unmodifiableMap(cookies)),
+                body.array());
     }
 
     public HttpMethod method() {
@@ -99,19 +103,7 @@ public record HttpRequest(StartLine startLine, HttpHeaders headers, Map<String, 
         return startLine.path;
     }
 
-    public boolean isGet() {
-        return HttpMethod.GET.equals(method());
-    }
-
-    public boolean isPost() {
-        return HttpMethod.POST.equals(method());
-    }
-
-    public boolean isDelete() {
-        return HttpMethod.DELETE.equals(method());
-    }
-
-    public boolean isPatch() {
-        return HttpMethod.PATCH.equals(method());
+    public HttpForm form() {
+        return HttpForm.from(body);
     }
 }

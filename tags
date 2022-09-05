@@ -27,11 +27,13 @@ HttpServer	src/http/HttpServer.java	/^public record HttpServer(int port, List<Ht
 HttpStatus	src/http/HttpStatus.java	/^public record HttpStatus(int code, String description) {$/;"	m
 Launcher	src/launcher/Launcher.java	/^public record Launcher() {$/;"	m
 Logging	src/util/Logging.java	/^public record Logging() {$/;"	m
+LoginPageHandler	src/handler/user/LoginPageHandler.java	/^public class LoginPageHandler implements HttpHandler {$/;"	c
 MANAGE_PERMISSIONS	src/model/Permission.java	/^    MANAGE_PERMISSIONS,$/;"	e	enum:Permission	file:
 MANAGE_USERS	src/model/Permission.java	/^    MANAGE_USERS,$/;"	e	enum:Permission	file:
 PATCH	src/http/HttpMethod.java	/^    PATCH,$/;"	e	enum:HttpMethod	file:
 POST	src/http/HttpMethod.java	/^    POST,$/;"	e	enum:HttpMethod	file:
 Permission	src/model/Permission.java	/^public enum Permission {$/;"	g
+Resource	src/util/Resource.java	/^public record Resource() {$/;"	m
 ResultSetDeserializer	src/db/ResultSetDeserializer.java	/^public interface ResultSetDeserializer<T> {$/;"	i
 SUPER_USER	src/model/Permission.java	/^    SUPER_USER,$/;"	e	enum:Permission	file:
 Session	src/Session/Session.java	/^public record Session(SessionKey key, String user) {$/;"	m
@@ -44,6 +46,7 @@ UserDAO	src/db/UserDAO.java	/^public class UserDAO {$/;"	c
 UserPermission	src/model/UserPermission.java	/^public record UserPermission(String user, Permission permission) {$/;"	m
 UserPermissionsDAO	src/db/UserPermissionsDAO.java	/^    UserPermissionsDAO(Database db) {$/;"	m	class:UserPermissionsDAO
 UserPermissionsDAO	src/db/UserPermissionsDAO.java	/^public class UserPermissionsDAO {$/;"	c
+accept	src/handler/user/LoginPageHandler.java	/^    public boolean accept(HttpContext context) {$/;"	m	class:LoginPageHandler
 accept	src/http/HttpHandler.java	/^    default boolean accept(HttpContext context) {$/;"	m	interface:HttpHandler
 accept	src/http/HttpHandler.java	/^    default boolean accept(HttpRequest request) {$/;"	m	interface:HttpHandler
 all	src/db/UserDAO.java	/^    public List<User> all() {$/;"	m	class:UserDAO
@@ -68,6 +71,7 @@ deserialize	src/db/UserDAO.java	/^    public User deserialize(ResultSet rs) thro
 exists	src/db/UserDAO.java	/^    public boolean exists(User user) {$/;"	m	class:UserDAO
 exists	src/db/UserPermissionsDAO.java	/^    public boolean exists(UserPermission userPermission) {$/;"	m	class:UserPermissionsDAO
 handle	src/db/ConnectionHandler.java	/^    T handle(Connection connection) throws SQLException;$/;"	m	interface:ConnectionHandler
+handle	src/handler/user/LoginPageHandler.java	/^    public HttpResponse handle(HttpContext context) {$/;"	m	class:LoginPageHandler
 handle	src/http/HttpHandler.java	/^    default HttpResponse handle(HttpContext context) {$/;"	m	interface:HttpHandler
 handle	src/http/HttpHandler.java	/^    default HttpResponse handle(HttpRequest request) {$/;"	m	interface:HttpHandler
 handler.admin	src/handler/admin/StopHandler.java	/^package handler.admin;$/;"	p
@@ -78,6 +82,7 @@ handler.permissions	src/handler/permissions/UserPermissionCreateHandler.java	/^p
 handler.user	src/handler/user/AuthenticateHandler.java	/^package handler.user;$/;"	p
 handler.user	src/handler/user/CreateUserHandler.java	/^package handler.user;$/;"	p
 handler.user	src/handler/user/DeleteUserHandler.java	/^package handler.user;$/;"	p
+handler.user	src/handler/user/LoginPageHandler.java	/^package handler.user;$/;"	p
 handler.user	src/handler/user/UpdateUserHandler.java	/^package handler.user;$/;"	p
 headers	src/http/HttpResponse.java	/^    private final HttpHeaders headers;$/;"	f	class:HttpResponse	file:
 headers	src/http/HttpResponse.java	/^    public HttpHeaders headers() {$/;"	m	class:HttpResponse
@@ -111,4 +116,5 @@ userPermissions	src/db/Database.java	/^    public final UserPermissionsDAO userP
 users	src/db/Database.java	/^    public final UserDAO users;$/;"	f	class:Database
 util	src/util/Crypto.java	/^package util;$/;"	p
 util	src/util/Logging.java	/^package util;$/;"	p
+util	src/util/Resource.java	/^package util;$/;"	p
 withConnection	src/db/Database.java	/^    public <T> T withConnection(ConnectionHandler<T> handler) {$/;"	m	class:Database

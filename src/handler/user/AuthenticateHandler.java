@@ -8,31 +8,23 @@ import session.SessionManager;
 
 public record AuthenticateHandler() implements HttpHandler {
     @Override
-    public boolean accept(HttpRequest request) {
-        return request.isPost() && request.path().equals("/auth");
-    }
-
-    @Override
-    public HttpResponse handle(HttpContext context) {
-        HttpForm form = context.form();
+    public HttpResponse post(HttpContext context) {
+        HttpForm form = context.request().form();
         Database db = context.database();
         SessionManager sm = context.sessionManager();
 
         if (!form.has("name", "password")) {
-            return new HttpResponse(HttpStatus.BAD_REQUEST);
+            return HttpResponse.of(HttpStatus.BAD_REQUEST);
         }
 
         User user = new User(form.get("name"), form.get("password"));
 
         if (!db.users.exists(user)) {
-            return new HttpResponse(HttpStatus.UNAUTHORIZED);
+            return HttpResponse.of(HttpStatus.UNAUTHORIZED);
         }
 
-        HttpResponse response = new HttpResponse(HttpStatus.OK);
         Session session = sm.newSession(user.name());
 
-        response.cookies().put("session", session.key().uuid().toString());
-
-        return response;
+        return HttpResponse.builder().cookie(Session.COOKIE_KEY, session.key().uuid().toString()).build();
     }
 }

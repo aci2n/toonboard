@@ -20,9 +20,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-public record HttpServer(int port, List<HttpHandler> handlers, Database database, SessionManager sessionManager) {
+public record HttpServer(int port, List<HttpRoute> routes, Database database, SessionManager sessionManager) {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH).withZone(ZoneId.of("GMT"));
     private static final Logger LOGGER = Logging.get(HttpServer.class);
+
+    public HttpServer(int port, List<HttpRoute> routes, Database database) {
+        this(port, routes, database, new SessionManager());
+    }
 
     public void start(AtomicBoolean cancel) throws IOException {
         try (ServerSocket serverSocket = new ServerSocket(port, 50, InetAddress.getByName("0.0.0.0"))) {
@@ -37,12 +41,12 @@ public record HttpServer(int port, List<HttpHandler> handlers, Database database
 
                     writer.printf("HTTP/1.1 %d %s%n", response.status().code(), response.status().description());
 
-                    Map<String, String> headers = new HashMap<>(response.headers().map());
+                    Map<String, String> headers = new HashMap<>(response.headers().entries());
                     headers.put("server", "i2n");
                     headers.put("date", DATE_FORMATTER.format(Instant.now()));
                     headers.put("content-length", Integer.toString(response.body().length));
-                    if (!response.cookies().isEmpty()) {
-                        headers.put("set-cookie", response.cookies().entrySet().stream()
+                    if (!response.cookies().entries().isEmpty()) {
+                        headers.put("set-cookie", response.cookies().entries().entrySet().stream()
                                 .map(cookie -> String.format("%s=%s", cookie.getKey(), cookie.getValue()))
                                 .collect(Collectors.joining("; ")));
                     }
@@ -67,20 +71,34 @@ public record HttpServer(int port, List<HttpHandler> handlers, Database database
         try {
             request = HttpRequest.readRequest(inputStream);
         } catch (IOException e) {
-            return new HttpResponse(HttpStatus.BAD_REQUEST);
+            return HttpResponse.of(HttpStatus.BAD_REQUEST);
         }
 
-        HttpContext context = new HttpContext(request, database, sessionManager);
-        Optional<HttpHandler> handler = handlers.stream().filter(h -> h.accept(context)).findFirst();
+        Optional<MatchedRoute> matched = routes.stream()
+                .map(r -> new MatchedRoute(r, r.pattern().matcher(request.path())))
+                .filter(m -> m.matcher().matches())
+                .findFirst();
 
-        if (handler.isEmpty()) {
-            throw new RuntimeException("no handlers found for request");
+        if (matched.isEmpty()) {
+            return HttpResponse.of(HttpStatus.NOT_FOUND);
         }
+
+        HttpContext context = new HttpContext(request, database, sessionManager, matched.get());
 
         try {
-            return handler.get().handle(context);
+            HttpHandler handler = matched.get().route().handler();
+            return switch (request.method()) {
+                case GET -> handler.get(context);
+                case POST -> handler.post(context);
+                case DELETE -> handler.delete(context);
+                case HEAD -> handler.head(context);
+                case PATCH -> handler.patch(context);
+                case CONNECT -> handler.connect(context);
+            };
+        } catch (HttpException e) {
+            return e.response();
         } catch (Exception e) {
-            return new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR, HttpHeaders.EMPTY, e);
+            return HttpResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).body(e).build();
         }
     }
 }

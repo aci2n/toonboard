@@ -6,12 +6,12 @@ import session.SessionManager;
 
 import java.util.Optional;
 
-public record HttpContext(HttpRequest request, Database database, SessionManager sessionManager) {
-    public HttpForm form() {
-        return HttpForm.from(request.body());
-    }
-
+public record HttpContext(
+        HttpRequest request,
+        Database database,
+        SessionManager sessionManager,
+        MatchedRoute matchedRoute) {
     public Optional<Session> session() {
-        return sessionManager.getSession(request);
+        return request.cookies().get(Session.COOKIE_KEY).flatMap(sessionManager::getSession);
     }
 }

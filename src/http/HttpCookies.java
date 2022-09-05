@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public record HttpHeaders(Map<String, String> entries) {
-    public HttpHeaders() {
+public record HttpCookies(Map<String, String> entries) {
+    public HttpCookies() {
         this(new HashMap<>());
     }
 

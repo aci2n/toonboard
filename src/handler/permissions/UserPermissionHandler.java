@@ -8,34 +8,28 @@ import session.Session;
 
 import java.util.Optional;
 
-public record UserPermissionCreateHandler() implements HttpHandler {
+public record UserPermissionHandler() implements HttpHandler {
     @Override
-    public boolean accept(HttpRequest request) {
-        return request.isPost() && request.path().equals("/user_permission");
-    }
-
-    @Override
-    public HttpResponse handle(HttpContext context) {
-        HttpRequest request = context.request();
+    public HttpResponse post(HttpContext context) {
         Optional<Session> session = context.session();
         Database db = context.database();
 
         if (session.isEmpty()) {
-            return new HttpResponse(HttpStatus.UNAUTHORIZED);
+            return HttpResponse.of(HttpStatus.UNAUTHORIZED);
         }
 
         if (!db.userPermissions.exists(new UserPermission(session.get().user(), Permission.MANAGE_PERMISSIONS))) {
-            return new HttpResponse(HttpStatus.FORBIDDEN);
+            return HttpResponse.of(HttpStatus.FORBIDDEN);
         }
 
-        HttpForm form = HttpForm.from(request.body());
+        HttpForm form = context.request().form();
 
         if (!form.has("user", "permission")) {
-            return new HttpResponse(HttpStatus.BAD_REQUEST);
+            return HttpResponse.of(HttpStatus.BAD_REQUEST);
         }
 
         db.userPermissions.insert(new UserPermission(form.get("user"), Permission.valueOf(form.get("permission"))));
 
-        return new HttpResponse(HttpStatus.CREATED);
+        return HttpResponse.of(HttpStatus.CREATED);
     }
 }

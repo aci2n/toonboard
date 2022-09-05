@@ -1,21 +1,35 @@
 package http;
 
 public interface HttpHandler {
-    @Deprecated
-    default boolean accept(HttpRequest request) {
-        return false;
+    static HttpResponse notAllowed() {
+        return HttpResponse.of(HttpStatus.METHOD_NOT_ALLOWED);
     }
 
-    @Deprecated
-    default HttpResponse handle(HttpRequest request) {
-        return new HttpResponse(HttpStatus.METHOD_NOT_ALLOWED);
+    default HttpResponse get(HttpContext context) {
+        return notAllowed();
     }
 
-    default boolean accept(HttpContext context) {
-        return accept(context.request());
+    default HttpResponse post(HttpContext context) {
+        return notAllowed();
     }
 
-    default HttpResponse handle(HttpContext context) {
-        return handle(context.request());
+    default HttpResponse put(HttpContext context) {
+        return notAllowed();
+    }
+
+    default HttpResponse patch(HttpContext context) {
+        return notAllowed();
+    }
+
+    default HttpResponse head(HttpContext context) {
+        return notAllowed();
+    }
+
+    default HttpResponse delete(HttpContext context) {
+        return notAllowed();
+    }
+
+    default HttpResponse connect(HttpContext context) {
+        return notAllowed();
     }
 }

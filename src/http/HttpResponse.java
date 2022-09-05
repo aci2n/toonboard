@@ -1,48 +1,59 @@
 package http;
 
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
-public final class HttpResponse {
-    private final HttpStatus status;
-    private final HttpHeaders headers;
-    private final byte[] body;
-    private final Map<String, String> cookies;
-
-    public HttpResponse(HttpStatus status, HttpHeaders headers, byte[] body) {
-        this.status = status;
-        this.headers = headers;
-        this.body = body;
-        this.cookies = new HashMap<>();
+public record HttpResponse(HttpStatus status, HttpHeaders headers, HttpCookies cookies, byte[] body) {
+    public static HttpResponse of(HttpStatus status) {
+        return HttpResponse.builder().status(status).build();
     }
 
-    public HttpResponse(HttpStatus status) {
-        this(status, HttpHeaders.EMPTY, new byte[0]);
+    public static Builder builder() {
+        return new Builder();
     }
 
-    public HttpResponse(HttpStatus status, HttpHeaders headers, String body) {
-        this(status, headers, body.getBytes(StandardCharsets.UTF_8));
-    }
+    public static class Builder {
+        private HttpStatus status;
+        private final HttpHeaders headers;
+        private final HttpCookies cookies;
+        private byte[] body;
 
-    public HttpResponse(HttpStatus status, HttpHeaders headers, Exception e) {
-        this(status, headers, e.getMessage());
-    }
+        private Builder() {
+            status = HttpStatus.OK;
+            headers = new HttpHeaders();
+            cookies = new HttpCookies();
+            body = new byte[0];
+        }
 
-    public HttpStatus status() {
-        return status;
-    }
+        public Builder status(HttpStatus status) {
+            this.status = status;
+            return this;
+        }
 
-    public HttpHeaders headers() {
-        return headers;
-    }
+        public Builder header(String key, String value) {
+            headers.put(key, value);
+            return this;
+        }
 
-    public byte[] body() {
-        return body;
-    }
+        public Builder cookie(String key, String value) {
+            cookies.put(key, value);
+            return this;
+        }
 
-    public Map<String, String> cookies() {
-        return cookies;
+        public Builder body(String body) {
+            return body(body.getBytes(StandardCharsets.UTF_8));
+        }
+
+        public Builder body(byte[] body) {
+            this.body = body;
+            return this;
+        }
+
+        public Builder body(Throwable throwable) {
+            return body(throwable.getMessage());
+        }
+
+        public HttpResponse build() {
+            return new HttpResponse(status, headers, cookies, body);
+        }
     }
 }

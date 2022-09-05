@@ -1,7 +1,5 @@
 package session;
 
-import http.HttpRequest;
-
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,11 +16,7 @@ public record SessionManager(ConcurrentMap<SessionKey, Session> sessions) {
         return session;
     }
 
-    public Optional<Session> getSession(HttpRequest request) {
-        String cookie = request.cookies().get("session");
-        if (cookie == null) {
-            return Optional.empty();
-        }
+    public Optional<Session> getSession(String cookie) {
         final UUID uuid;
         try {
             uuid = UUID.fromString(cookie);
